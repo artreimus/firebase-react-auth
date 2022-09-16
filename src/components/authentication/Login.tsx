@@ -1,8 +1,9 @@
 import React from 'react';
 import { Button, Card, Form, Alert } from 'react-bootstrap';
 import { SyntheticEvent, useRef, useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
+import CenteredContainer from './CenteredContainer';
 
 function Login(): JSX.Element {
   const emailRef = useRef() as React.MutableRefObject<HTMLInputElement>;
@@ -28,7 +29,7 @@ function Login(): JSX.Element {
   }
 
   return (
-    <div>
+    <CenteredContainer>
       <Card>
         <Card.Body>
           <h2 className="text-center mb-4">Login</h2>
@@ -54,7 +55,7 @@ function Login(): JSX.Element {
       <div className="w-100 text-center mt-2">
         Need an account? <Link to="/signup">Sign up</Link>
       </div>
-    </div>
+    </CenteredContainer>
   );
 }
 

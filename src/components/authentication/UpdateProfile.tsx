@@ -1,14 +1,15 @@
 import { Button, Card, Form, Alert } from 'react-bootstrap';
 import { SyntheticEvent, useRef, useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
+import CenteredContainer from './CenteredContainer';
 
 // interface useAuthContext {
 //   currentUser: firebase.User | null;
 //   signup: any;
 // }
 
-function Signup(): JSX.Element {
+function UpdateProfile(): JSX.Element {
   const [error, setError] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -18,58 +19,83 @@ function Signup(): JSX.Element {
   const passwordConfirmRef =
     useRef() as React.MutableRefObject<HTMLInputElement>;
 
-  const { signup }: any = useAuth();
+  const { currentUser, updateEmail, updatePassword }: any = useAuth();
 
   const navigate = useNavigate();
 
-  async function handleSubmit(e: SyntheticEvent) {
+  function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
+
+    const promises = [];
+    setIsLoading(true);
+    setError('');
+
+    if (emailRef.current.value !== currentUser.email) {
+      promises.push(updateEmail(emailRef.current.value));
+    }
 
     if (passwordRef.current.value !== passwordConfirmRef.current.value) {
       return setError('Passwords do not match');
     }
 
-    try {
-      setError('');
-      setIsLoading(true);
-      await signup(emailRef.current.value, passwordRef.current.value);
-      navigate('/');
-    } catch {
-      setError('Failed to create an account');
+    if (passwordRef.current.value) {
+      promises.push(updatePassword(passwordRef.current.value));
     }
-    setIsLoading(false);
+
+    // if all promises are successful, navigate to home, if not
+    Promise.all(promises)
+      .then(() => navigate('/user'))
+      .catch(() => {
+        setError('Failed to update profile');
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }
 
   return (
-    <div>
+    <CenteredContainer>
       <Card>
         <Card.Body>
-          <h2 className="text-center mb-4">Sign up</h2>
+          <h2 className="text-center mb-4">Update Profile</h2>
           {error && <Alert variant="danger">{error}</Alert>}
           <Form onSubmit={handleSubmit}>
             <Form.Group id="email">
               <Form.Label>Email</Form.Label>
-              <Form.Control type="email" ref={emailRef} required />
+              <Form.Control
+                type="email"
+                ref={emailRef}
+                required
+                defaultValue={currentUser.email}
+              />
             </Form.Group>
             <Form.Group id="password">
               <Form.Label>Password</Form.Label>
-              <Form.Control type="password" ref={passwordRef} required />
+              <Form.Control
+                type="password"
+                ref={passwordRef}
+                placeholder="Leave blank to keep the same"
+              />
             </Form.Group>
             <Form.Group id="password-confirm">
               <Form.Label>Password Confirmation</Form.Label>
-              <Form.Control type="password" ref={passwordConfirmRef} required />
+              <Form.Control
+                type="password"
+                ref={passwordConfirmRef}
+                placeholder="Leave blank to keep the same"
+              />
             </Form.Group>
             <Button disabled={isLoading} className="w-100 mt-3" type="submit">
-              Sign Up
+              Update
             </Button>
           </Form>
         </Card.Body>
       </Card>
       <div className="w-100 text-center mt-2">
-        Already have an account? <Link to="/login">Login</Link>
+        <Link to="/user">Cancel</Link>
       </div>
-    </div>
+    </CenteredContainer>
   );
 }
 
-export default Signup;
+export default UpdateProfile;

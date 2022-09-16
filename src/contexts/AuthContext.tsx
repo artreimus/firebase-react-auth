@@ -37,14 +37,14 @@ function AuthProvider({ children }: any): JSX.Element {
   }
 
   useEffect(() => {
-    const unsbuscribe = auth.onAuthStateChanged(
+    const unsubscribe = auth.onAuthStateChanged(
       (user: firebase.User | null) => {
         setCurrentUser(user); // sets the user whenever auth changes
         setIsLoading(false);
       }
     ); // returns a method for unsbuscribing
 
-    return unsbuscribe; // unsub if component unmounts
+    return unsubscribe; // unsub if component unmounts
   }, []);
 
   // provides the value to the children of AuthContext.Provider
