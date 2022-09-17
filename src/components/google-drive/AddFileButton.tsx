@@ -4,19 +4,80 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { storage, database } from '../../firebase';
-import { ROOT_FOLDER } from '../../hooks/useFolder';
+import { ROOT_FOLDER, useFolder } from '../../hooks/useFolder';
 import { UUID } from 'uuid-generator-ts';
-import { ProgressBar, Toast } from 'react-bootstrap';
+import { Modal, ProgressBar, Toast, Button } from 'react-bootstrap';
+import { useParams } from 'react-router-dom';
 
 function AddFileButton({ currentFolder }: any) {
   const [uploadingFiles, setUploadingFiles] = useState<any>([]);
+  const [open, setOpen] = useState(false);
+  const [originalFile, setOriginalFile] = useState<File>();
+
+  const { folderId } = useParams();
+  const { childFiles }: any = useFolder(folderId);
 
   const { currentUser }: any = useAuth();
 
-  function handleUpload(e: any) {
+  let fileName = '';
+  let isFileExisting = false;
+
+  function openModal() {
+    setOpen(true);
+  }
+
+  function closeModal() {
+    setOpen(false);
+    isFileExisting = false;
+    console.log('closing modal..');
+  }
+
+  function createCopyOfFile(e: any) {
+    const file: any = e.target.files![0];
+    return new File([file], file.name, { type: file.type });
+  }
+
+  function updateFilename(file: any) {
+    fileName = file.name;
+    if (currentFolder == null || file == null) return;
+
+    let fileNumber = 1;
+
+    if (childFiles.length > 0) {
+      childFiles.forEach((childFile: any) => {
+        console.log(childFile.name);
+        if (childFile.name === fileName) {
+          fileName = `${file.name} (${fileNumber++})`;
+        }
+      });
+    }
+
+    Object.defineProperty(file, 'name', {
+      writable: true,
+      value: fileName,
+    });
+
+    return file;
+  }
+
+  function checkIfFileExist(e: any) {
     const file: any = e.target.files![0];
     if (currentFolder == null || file == null) return;
 
+    if (childFiles.length > 0) {
+      childFiles.forEach((childFile: any) => {
+        if (childFile.name === file.name) {
+          isFileExisting = true;
+        }
+      });
+    }
+
+    !isFileExisting && handleUpload(file);
+    isFileExisting && openModal();
+  }
+
+  function handleUpload(file: any) {
+    if (currentFolder == null || file == null) return;
     const id = new UUID();
 
     setUploadingFiles((prevUploadingFiles: any) => {
@@ -30,9 +91,6 @@ function AddFileButton({ currentFolder }: any) {
       currentFolder === ROOT_FOLDER
         ? `${currentFolder.path.join('/')}/${file.name}`
         : `${currentFolder.path.join('/')}/${currentFolder.name}/${file.name}`;
-
-    console.log(currentFolder.path.length);
-    console.log(filePath);
 
     const uploadTask = storage
       .ref(`/files/${currentUser.uid}/${filePath}`) // upload directory
@@ -113,7 +171,10 @@ function AddFileButton({ currentFolder }: any) {
         <FontAwesomeIcon icon={faFileUpload} />
         <input
           type="file"
-          onChange={handleUpload}
+          onChange={(e) => {
+            setOriginalFile(createCopyOfFile(e));
+            checkIfFileExist(e);
+          }}
           style={{ opacity: 0, position: 'absolute', left: '-9999px' }}
         />
       </label>
@@ -163,6 +224,30 @@ function AddFileButton({ currentFolder }: any) {
           </div>,
           document.body
         )}
+
+      <Modal show={open} onHide={closeModal}>
+        <Modal.Body>
+          <p>File already Exist. What do you want to do?</p>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              handleUpload(updateFilename(originalFile));
+              closeModal();
+            }}
+          >
+            Change Filename
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              handleUpload(originalFile);
+              closeModal();
+            }}
+          >
+            Replace File
+          </Button>
+        </Modal.Body>
+      </Modal>
     </>
   );
 }

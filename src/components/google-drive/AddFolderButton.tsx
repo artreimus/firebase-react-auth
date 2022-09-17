@@ -4,12 +4,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFolderPlus } from '@fortawesome/free-solid-svg-icons';
 import { database } from '../../firebase';
 import { useAuth } from '../../contexts/AuthContext';
-import { ROOT_FOLDER } from '../../hooks/useFolder';
+import { ROOT_FOLDER, useFolder } from '../../hooks/useFolder';
+import { useParams } from 'react-router-dom';
 
 function AddFolderButton({ currentFolder }: any) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const { currentUser }: any = useAuth();
+  const { folderId } = useParams();
+  const { childFolders }: any = useFolder(folderId);
 
   function openModal() {
     setOpen(true);
@@ -19,10 +22,25 @@ function AddFolderButton({ currentFolder }: any) {
     setOpen(false);
   }
 
+  let folderName: string;
+
+  function updateFilename() {
+    let folderNumber = 1;
+    folderName = name;
+
+    childFolders.forEach((childFolder: any) => {
+      if (childFolder.name === folderName) {
+        folderName = `${name} (${folderNumber++})`;
+      }
+    });
+  }
+
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
 
     if (currentFolder == null) return;
+
+    updateFilename();
 
     const path = [...currentFolder.path];
     if (currentFolder !== ROOT_FOLDER) {
@@ -30,7 +48,7 @@ function AddFolderButton({ currentFolder }: any) {
     }
     // Create a folder in the database
     database.folders.add({
-      name: name,
+      name: folderName,
       parentId: currentFolder.id,
       userId: currentUser.uid,
       path: path,
