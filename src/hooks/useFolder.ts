@@ -7,6 +7,7 @@ const ACTIONS = {
   UPDATE_FOLDER: 'update-folder',
   SET_CHILD_FOLDERS: 'set-child-folders',
   SET_CHILD_FILES: 'set-child-files',
+  SET_ALL_FILES: 'set-all-files',
 };
 
 // this is fake folder that only exist in our code to provide a -
@@ -44,11 +45,16 @@ function reducer(
       };
     case ACTIONS.SET_CHILD_FILES:
       return {
-        // only update the folder portion of our state
+        // only update the file portion of our state
         ...state,
         childFiles: action.payload.childFiles,
       };
-
+    case ACTIONS.SET_ALL_FILES:
+      return {
+        // only update the file portion of our state
+        ...state,
+        allFiles: action.payload.allFiles,
+      };
     default:
       return state; // return default state
   }
@@ -60,6 +66,7 @@ export function useFolder(folderId: string | null = null, folder: any = null) {
     folder,
     childFolders: [],
     childFiles: [],
+    allFiles: [],
   };
 
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -67,7 +74,6 @@ export function useFolder(folderId: string | null = null, folder: any = null) {
   const { currentUser }: any = useAuth();
 
   useEffect(() => {
-    console.log('SELECT FOLDER');
     dispatch({
       type: ACTIONS.SELECT_FOLDER,
       payload: {
@@ -79,8 +85,6 @@ export function useFolder(folderId: string | null = null, folder: any = null) {
 
   // load all details about the folder using the folderId
   useEffect(() => {
-    console.log('UPDATE FOLDER');
-
     // if we are in the root folder
     if (folderId == null) {
       return dispatch({
@@ -90,6 +94,7 @@ export function useFolder(folderId: string | null = null, folder: any = null) {
     }
 
     // if folderId is not null, get folder from firestore
+
     database.folders
       .doc(folderId)
       .get()
@@ -100,7 +105,6 @@ export function useFolder(folderId: string | null = null, folder: any = null) {
         });
       })
       .catch((e) => {
-        console.error(e);
         dispatch({
           type: ACTIONS.UPDATE_FOLDER,
           payload: { folder: ROOT_FOLDER },
@@ -141,5 +145,21 @@ export function useFolder(folderId: string | null = null, folder: any = null) {
 
     return () => cleanup(); // cleanup function for snapshot
   }, [folderId, currentUser]);
+
+  // get all files of the user
+  useEffect(() => {
+    const cleanup = database.files
+      .where('userId', '==', currentUser.uid)
+      .orderBy('createdAt')
+      .onSnapshot((snapshot) => {
+        dispatch({
+          type: ACTIONS.SET_ALL_FILES,
+          payload: { allFiles: snapshot.docs.map(database.formatDoc) },
+        });
+      });
+
+    return () => cleanup(); // cleanup function for snapshot
+  }, [folderId, currentUser]);
+
   return state;
 }
