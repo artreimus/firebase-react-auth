@@ -1,6 +1,4 @@
 import Navbar from './Navbar';
-import AddFolderButton from './AddFolderButton';
-import AddFileButton from './AddFileButton';
 import { useFolder } from '../../hooks/useFolder';
 import Folder from './Folder';
 import { useParams } from 'react-router-dom';
@@ -12,18 +10,15 @@ import { useProvideContext } from '../../contexts/Context';
 import SortFoldersMenu from './SortFoldersMenu';
 import SortFilesMenu from './SortFilesMenu';
 
-function Dashboard() {
+function Favorites() {
   const { folderId } = useParams();
-  const { folder, childFolders, childFiles }: any = useFolder(folderId);
-
+  const { folder, allFolders, allFiles }: any = useFolder(folderId);
   const { fileSortType, folderSortType, setCurrentPage }: any =
     useProvideContext();
-
   const [windowSize, setWindowSize] = useState(getWindowSize());
-  console.log(folderId);
 
   useEffect(() => {
-    if (folderId === undefined) setCurrentPage('dashboard');
+    setCurrentPage('favorites');
 
     const handleWindowResize = () => {
       setWindowSize(getWindowSize());
@@ -82,40 +77,53 @@ function Dashboard() {
   return (
     <>
       <Navbar />
+
       <div className="dashboard_container_main">
         <Sidebar windowWidth={windowSize.innerWidth} />
+
         <main className="dashboard_section">
           <FolderBreadcrumbs currentFolder={folder} />
+
           <section className="section_folders">
             <div className="dashboard_container_header">
-              <h2 className="dashboard_header_title">Folders</h2>
-              <AddFolderButton currentFolder={folder} />
+              <h2 className="dashboard_header_title">Favorite Folders</h2>
               <SortFoldersMenu />
             </div>
             <hr className="dashboard_header_divider"></hr>
             <div className="folders_container">
-              {childFolders.length > 0 &&
-                sortItems(childFolders, folderSortType).map(
-                  (childFolder: any) => (
-                    <Folder folder={childFolder} key={childFolder.id} />
-                  )
+              {(allFolders ? allFolders.length > 0 : false) &&
+                sortItems(allFolders, folderSortType).map(
+                  (childFolder: any) => {
+                    if (childFolder.isFavorite) {
+                      return (
+                        <Folder folder={childFolder} key={childFolder.id} />
+                      );
+                    }
+                    return null;
+                  }
                 )}
             </div>
           </section>
 
           <section className="section_files">
             <div className="dashboard_container_header">
-              <h2 className="dashboard_header_title">Files</h2>
-              <AddFileButton currentFolder={folder} />
+              <h2 className="dashboard_header_title">Favorite Files</h2>
               <SortFilesMenu />
             </div>
             <hr className="dashboard_header_divider"></hr>
-            <div className="files_container">
-              {childFiles.length > 0 &&
-                sortItems(childFiles, fileSortType).map((childFile: any) => (
-                  <File file={childFile} key={childFile.id} />
-                ))}
-            </div>
+
+            {(folder ? folder.name : 'error') === 'Root' &&
+              (allFiles ? allFiles.length > 0 : false) && (
+                <div className="files_container">
+                  {sortItems(allFiles, fileSortType)
+                    .filter((file: any) => {
+                      return file.isFavorite;
+                    })
+                    .map((file: any) => {
+                      return <File file={file} key={file.id} />;
+                    })}
+                </div>
+              )}
           </section>
         </main>
       </div>
@@ -123,4 +131,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default Favorites;

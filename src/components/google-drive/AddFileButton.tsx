@@ -2,7 +2,7 @@ import { faFileUpload } from '@fortawesome/free-solid-svg-icons';
 import ReactDOM from 'react-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useProvideContext } from '../../contexts/Context';
 import { storage, database } from '../../firebase';
 import { ROOT_FOLDER, useFolder } from '../../hooks/useFolder';
 import { UUID } from 'uuid-generator-ts';
@@ -17,7 +17,7 @@ function AddFileButton({ currentFolder }: any) {
   const { folderId } = useParams();
   const { childFiles }: any = useFolder(folderId);
 
-  const { currentUser }: any = useAuth();
+  const { currentUser }: any = useProvideContext();
 
   let fileName = '';
   let isFileExisting = false;
@@ -29,7 +29,6 @@ function AddFileButton({ currentFolder }: any) {
   function closeModal() {
     setOpen(false);
     isFileExisting = false;
-    console.log('closing modal..');
   }
 
   function createCopyOfFile(e: any) {
@@ -45,7 +44,6 @@ function AddFileButton({ currentFolder }: any) {
 
     if (childFiles.length > 0) {
       childFiles.forEach((childFile: any) => {
-        console.log(childFile.name);
         if (childFile.name === fileName) {
           fileName = `${file.name} (${fileNumber++})`;
         }
@@ -78,6 +76,7 @@ function AddFileButton({ currentFolder }: any) {
 
   function handleUpload(file: any) {
     if (currentFolder == null || file == null) return;
+
     const id = new UUID();
 
     setUploadingFiles((prevUploadingFiles: any) => {
@@ -151,9 +150,11 @@ function AddFileButton({ currentFolder }: any) {
                 database.files.add({
                   url: url,
                   name: file.name,
+                  size: file.size,
                   createdAt: database.getCurrentTimeStamps(),
                   folderId: currentFolder.id,
                   userId: currentUser.uid,
+                  isFavorite: false,
                 });
               }
             });
@@ -164,10 +165,7 @@ function AddFileButton({ currentFolder }: any) {
 
   return (
     <>
-      <label
-        className="btn btn-outline-success btn-sm"
-        style={{ marginRight: '0.5rem' }}
-      >
+      <label className="add_btn center_all">
         <FontAwesomeIcon icon={faFileUpload} />
         <input
           type="file"

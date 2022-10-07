@@ -45,47 +45,59 @@ function DeleteFolder({ folderId }: any) {
 
   return (
     <>
-      <Button
-        variant="secondary"
+      <button
         onClick={() => {
           openModal();
         }}
+        className="item_menu_button"
       >
-        <p></p>
-      </Button>
+        Delete
+      </button>
       <Modal show={open} onHide={closeModal}>
         <Modal.Body>
-          <p>Are you sure you want to delete the folder?</p>
-          <Button
-            variant="secondary"
-            onClick={() => {
-              deleteFolder();
-            }}
-          >
-            Yes
-          </Button>
-          <Button
-            variant="secondary"
-            onClick={() => {
-              closeModal();
-            }}
-          >
-            Cancel
-          </Button>
+          <p>Are you sure you want to permanently delete this folder?</p>
+          <div className="modal_container_buttons">
+            <button
+              onClick={() => {
+                deleteFolder();
+              }}
+              className="modal_button"
+            >
+              <div className="button_container_icon">
+                <img
+                  src={require(`../../images/confirm.png`)}
+                  alt="File Icon"
+                />
+              </div>
+            </button>
+            <button
+              onClick={() => {
+                closeModal();
+              }}
+              className="modal_button"
+            >
+              <div className="button_container_icon">
+                <img src={require(`../../images/cancel.png`)} alt="File Icon" />
+              </div>{' '}
+            </button>
+          </div>
         </Modal.Body>
       </Modal>
 
       <Modal show={openError} onHide={hideError}>
         <Modal.Body>
-          <p>Cannot delete folder</p>
-          <Button
-            variant="danger"
+          <p>
+            Failed to delete folder. Please delete all folders and files in the
+            folder before deleting this folder
+          </p>
+          <button
             onClick={() => {
               hideError();
             }}
+            className="modal_button modal_error_button"
           >
-            Okay
-          </Button>
+            Close
+          </button>
         </Modal.Body>
       </Modal>
     </>

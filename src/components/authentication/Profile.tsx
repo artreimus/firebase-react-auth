@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { Button, Card, Alert } from 'react-bootstrap';
-import { useAuth } from '../../contexts/AuthContext';
+import { useProvideContext } from '../../contexts/Context';
 import { Link, useNavigate } from 'react-router-dom';
 import CenteredContainer from './CenteredContainer';
+import Navbar from '../google-drive/Navbar';
 
 function Profile() {
   const [error, setError] = useState<string>('');
 
-  const { currentUser, logout }: any = useAuth();
+  const { currentUser, logout }: any = useProvideContext();
 
   const navigate = useNavigate();
 
@@ -23,23 +24,34 @@ function Profile() {
   }
 
   return (
-    <CenteredContainer>
-      <Card>
-        <Card.Body>
-          <h2 className="text-center mb-4">Profile</h2>
-          {error && <Alert variant="danger">{error}</Alert>}
-          <strong>Email: </strong> {currentUser.email}
-          <Link to="/update-profile" className="btn btn-primary w-100 mt-3">
-            Update profile
-          </Link>
-        </Card.Body>
-        <div className="w-100 text-center mt-2">
-          <Button variant="link" onClick={handleLogout}>
-            Log out
-          </Button>
+    <>
+      <Navbar />
+      <h2 className="title">Profile</h2>
+
+      <div className="profile center_all">
+        <div className="profile_container">
+          <div className="profile_container_header center_all">
+            <div className="profile_img"></div>
+            <p className="profile_name">{currentUser.displayName}</p>
+          </div>
+          <div className="profile_container_body center_all">
+            <div className="profile_info">
+              <strong>Email:</strong>
+              <p>{currentUser.email}</p>
+            </div>
+            <div className="profile_info">
+              <strong>Password:</strong>
+              <p>******************</p>
+            </div>
+            <div className="profile_container_btn">
+              <Link to="/update-profile" className="link">
+                <p>update profile</p>
+              </Link>
+            </div>
+          </div>
         </div>
-      </Card>
-    </CenteredContainer>
+      </div>
+    </>
   );
 }
 

@@ -1,17 +1,14 @@
 import React, { useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { database } from '../../firebase';
-import { useParams } from 'react-router-dom';
 import { ROOT_FOLDER, useFolder } from '../../hooks/useFolder';
 import { storage } from '../../firebase';
 
-function DeleteFile({ fileId, fileName, userId }: any) {
+function DeleteFile({ fileId, fileName, userId, fileFolderId }: any) {
   const [open, setOpen] = useState(false);
   const [openError, setOpenError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
 
-  const { folderId } = useParams();
-  const { folder }: any = useFolder(folderId);
+  const { folder }: any = useFolder(fileFolderId);
 
   function openModal() {
     setOpen(true);
@@ -22,7 +19,6 @@ function DeleteFile({ fileId, fileName, userId }: any) {
   }
 
   function showError(e: any) {
-    setErrorMessage(e);
     setOpenError(true);
   }
 
@@ -36,7 +32,7 @@ function DeleteFile({ fileId, fileName, userId }: any) {
     const filePath: string =
       folder === ROOT_FOLDER
         ? `files/${userId}${folder.path.join('/')}/${fileName}`
-        : `files/${userId}${folder.path.join('/')}/${folder.name}/${fileName}`;
+        : `files/${userId}/${folder.path.join('/')}/${folder.name}/${fileName}`;
     console.log(filePath);
 
     const storageRef = storage.ref();
@@ -52,54 +48,63 @@ function DeleteFile({ fileId, fileName, userId }: any) {
           .then(() => {
             console.log('Successfully deleted in database!');
           })
-          .catch(() => showError('Failed to delete from Furebase Database'));
+          .catch(() => showError('Failed to delete from Firebase Database'));
       })
       .catch(() => showError('Failed to delete from Firebase Storage'));
   }
 
   return (
     <>
-      <Button
-        variant="secondary"
+      <button
         onClick={() => {
           openModal();
         }}
+        className="item_menu_button"
       >
-        <p></p>
-      </Button>
+        Delete
+      </button>
 
       <Modal show={open} onHide={closeModal}>
         <Modal.Body>
-          <p>Are you sure you want to delete the file?</p>
-          <Button
-            variant="secondary"
-            onClick={() => {
-              deleteFile();
-            }}
-          >
-            Yes
-          </Button>
-          <Button
-            variant="secondary"
-            onClick={() => {
-              closeModal();
-            }}
-          >
-            Cancel
-          </Button>
+          <p>Are you sure you want to permanently delete this file?</p>
+          <div className="modal_container_buttons">
+            <button
+              onClick={() => {
+                deleteFile();
+              }}
+              className="modal_button"
+            >
+              <div className="button_container_icon">
+                <img
+                  src={require(`../../images/confirm.png`)}
+                  alt="File Icon"
+                />
+              </div>
+            </button>
+            <button
+              onClick={() => {
+                closeModal();
+              }}
+              className="modal_button"
+            >
+              <div className="button_container_icon">
+                <img src={require(`../../images/cancel.png`)} alt="File Icon" />
+              </div>{' '}
+            </button>
+          </div>
         </Modal.Body>
       </Modal>
 
       <Modal show={openError} onHide={hideError}>
         <Modal.Body>
-          <p>{errorMessage}</p>
+          <p>Failed to delete file. Please try again</p>
           <Button
             variant="danger"
             onClick={() => {
               hideError();
             }}
           >
-            Okay
+            Close
           </Button>
         </Modal.Body>
       </Modal>

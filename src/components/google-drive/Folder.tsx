@@ -1,36 +1,55 @@
-import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFolder } from '@fortawesome/free-solid-svg-icons';
-import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import DeleteFolder from './DeleteFolder';
+import { useState } from 'react';
+import FavoriteFolder from './FavoriteFolder';
 
 function Folder({ folder }: any) {
-  const [isHover, setIsHover] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  function handleMouseEnter() {
-    setIsHover(true);
-  }
-
-  function handleMouseLeave() {
-    setIsHover(false);
+  function setVisibility() {
+    if (!isMenuOpen) {
+      return 'hidden';
+    }
+    return;
   }
 
   return (
-    <Button variant="outline-dark" className="text-truncate w-100">
-      <Link
-        to={`/folder/${folder.id}`}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        style={{ textDecoration: 'none', color: isHover ? 'white' : 'black' }}
-      >
-        <FontAwesomeIcon
-          icon={faFolder}
-          className="mr-2"
-          style={{ marginRight: '.5em' }}
-        />
-        {folder.name}
-      </Link>
-    </Button>
+    <>
+      <div
+        className={isMenuOpen ? 'bg_menu' : 'bg_menu hidden'}
+        onClick={() => setIsMenuOpen((prevIsMenuOpen) => !prevIsMenuOpen)}
+      ></div>
+
+      <div className="folder_item center_all">
+        <div className="item_menu">
+          <button
+            className="item_btn_menu folder_item_btn_menu"
+            onClick={() => setIsMenuOpen((prevIsMenuOpen) => !prevIsMenuOpen)}
+          >
+            <img src={require(`../../images/menu.png`)} alt="Menu" />
+          </button>
+          <div className={`item_menu_container_list ${setVisibility()}`}>
+            <ul className="item_menu_list">
+              <li className="item_menu_list_item">
+                <DeleteFolder folderId={folder.id} />
+              </li>
+              <li className="item_menu_list_item">
+                <FavoriteFolder folder={folder} />
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <Link to={`/folder/${folder.id}`} className="folder_item_link link">
+          <div className="center_all">
+            <FontAwesomeIcon icon={faFolder} className="folder_item_icon" />
+          </div>
+          <p className="folder_item_name">{folder.name}</p>
+        </Link>
+      </div>
+    </>
   );
 }
 

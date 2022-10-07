@@ -1,6 +1,6 @@
 import { useEffect, useReducer } from 'react';
 import { database } from '../firebase';
-import { useAuth } from '../contexts/AuthContext';
+import { useProvideContext } from '../contexts/Context';
 
 const ACTIONS = {
   SELECT_FOLDER: 'select-folder',
@@ -8,6 +8,7 @@ const ACTIONS = {
   SET_CHILD_FOLDERS: 'set-child-folders',
   SET_CHILD_FILES: 'set-child-files',
   SET_ALL_FILES: 'set-all-files',
+  SET_ALL_FOLDERS: 'set-all-folders',
 };
 
 // this is fake folder that only exist in our code to provide a -
@@ -55,6 +56,12 @@ function reducer(
         ...state,
         allFiles: action.payload.allFiles,
       };
+    case ACTIONS.SET_ALL_FOLDERS:
+      return {
+        // only update the file portion of our state
+        ...state,
+        allFolders: action.payload.allFolders,
+      };
     default:
       return state; // return default state
   }
@@ -67,11 +74,12 @@ export function useFolder(folderId: string | null = null, folder: any = null) {
     childFolders: [],
     childFiles: [],
     allFiles: [],
+    allFolders: [],
   };
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const { currentUser }: any = useAuth();
+  const { currentUser }: any = useProvideContext();
 
   useEffect(() => {
     dispatch({
@@ -155,6 +163,21 @@ export function useFolder(folderId: string | null = null, folder: any = null) {
         dispatch({
           type: ACTIONS.SET_ALL_FILES,
           payload: { allFiles: snapshot.docs.map(database.formatDoc) },
+        });
+      });
+
+    return () => cleanup(); // cleanup function for snapshot
+  }, [folderId, currentUser]);
+
+  // get all folders of the user
+  useEffect(() => {
+    const cleanup = database.folders
+      .where('userId', '==', currentUser.uid)
+      .orderBy('createdAt')
+      .onSnapshot((snapshot) => {
+        dispatch({
+          type: ACTIONS.SET_ALL_FOLDERS,
+          payload: { allFolders: snapshot.docs.map(database.formatDoc) },
         });
       });
 

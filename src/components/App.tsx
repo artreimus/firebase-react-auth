@@ -4,9 +4,13 @@ import Login from './authentication/Login';
 import ForgotPassword from './authentication/ForgotPassword';
 import UpdateProfile from './authentication/UpdateProfile';
 import PrivateRoute from './authentication/PrivateRoute';
-import { AuthProvider } from '../contexts/AuthContext';
+import { AuthProvider } from '../contexts/Context';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Dashboard from './google-drive/Dashboard';
+import LandingPage from './authentication/LandingPage';
+import QuickAccess from './google-drive/QuickAccess';
+import Favorites from './google-drive/Favorites';
+import PublicRoute from './authentication/PublicRoute';
 
 function App() {
   return (
@@ -14,18 +18,67 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/">
+            <Route index element={<LandingPage />} />
+            <Route
+              path="signup"
+              element={
+                <PublicRoute>
+                  <Signup />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="login"
+              element={
+                <PublicRoute>
+                  <Login />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="forgot-password"
+              element={
+                <PublicRoute>
+                  <ForgotPassword />
+                </PublicRoute>
+              }
+            />
+
             {/* Drive */}
             <Route
-              index
+              path="dashboard"
               element={
                 <PrivateRoute>
                   <Dashboard />
                 </PrivateRoute>
               }
             />
-            {/* Profile */}
             <Route
-              path="user"
+              path="quick-access"
+              element={
+                <PrivateRoute>
+                  <QuickAccess />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="favorites"
+              element={
+                <PrivateRoute>
+                  <Favorites />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="private-files"
+              element={
+                <PrivateRoute>
+                  <Dashboard />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="profile"
               element={
                 <PrivateRoute>
                   <Profile />
@@ -48,11 +101,6 @@ function App() {
                 </PrivateRoute>
               }
             />
-
-            {/* Authentication */}
-            <Route path="signup" element={<Signup />} />
-            <Route path="login" element={<Login />} />
-            <Route path="forgot-password" element={<ForgotPassword />} />
           </Route>
         </Routes>
       </AuthProvider>

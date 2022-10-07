@@ -12,6 +12,7 @@ function ContextProvider({ children }: any): JSX.Element {
   const [currentUser, setCurrentUser] = useState<firebase.User | null>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState('');
 
   const [fileSortType, setFileSortType] = useState({
     type: 'date',
@@ -28,9 +29,16 @@ function ContextProvider({ children }: any): JSX.Element {
     });
   }
 
-  function signup(email: string, password: string) {
-    return auth.createUserWithEmailAndPassword(email, password);
+  function signup(email: string, password: string, name: string) {
+    return auth.createUserWithEmailAndPassword(email, password).then(() => {
+      const user = firebase.auth().currentUser;
+      user?.updateProfile({ displayName: name, photoURL: null });
+    });
   } // signups the user
+
+  function updateName(name: string) {
+    return currentUser?.updateProfile({ displayName: name, photoURL: null });
+  }
 
   function login(email: string, password: string) {
     return auth.signInWithEmailAndPassword(email, password);
@@ -74,10 +82,14 @@ function ContextProvider({ children }: any): JSX.Element {
     updatePassword,
     isSidebarOpen,
     toggleSidebar,
+    setIsSidebarOpen,
     folderSortType,
     setFolderSortType,
     fileSortType,
     setFileSortType,
+    currentPage,
+    setCurrentPage,
+    updateName,
   };
 
   return (

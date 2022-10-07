@@ -12,18 +12,15 @@ import { useProvideContext } from '../../contexts/Context';
 import SortFoldersMenu from './SortFoldersMenu';
 import SortFilesMenu from './SortFilesMenu';
 
-function Dashboard() {
+function QuickAccess() {
   const { folderId } = useParams();
-  const { folder, childFolders, childFiles }: any = useFolder(folderId);
-
+  const { folder, allFolders, allFiles }: any = useFolder(folderId);
   const { fileSortType, folderSortType, setCurrentPage }: any =
     useProvideContext();
-
   const [windowSize, setWindowSize] = useState(getWindowSize());
-  console.log(folderId);
 
   useEffect(() => {
-    if (folderId === undefined) setCurrentPage('dashboard');
+    setCurrentPage('quick-access');
 
     const handleWindowResize = () => {
       setWindowSize(getWindowSize());
@@ -84,18 +81,19 @@ function Dashboard() {
       <Navbar />
       <div className="dashboard_container_main">
         <Sidebar windowWidth={windowSize.innerWidth} />
+
         <main className="dashboard_section">
           <FolderBreadcrumbs currentFolder={folder} />
           <section className="section_folders">
             <div className="dashboard_container_header">
-              <h2 className="dashboard_header_title">Folders</h2>
+              <h2 className="dashboard_header_title">All Folders</h2>
               <AddFolderButton currentFolder={folder} />
               <SortFoldersMenu />
             </div>
             <hr className="dashboard_header_divider"></hr>
             <div className="folders_container">
-              {childFolders.length > 0 &&
-                sortItems(childFolders, folderSortType).map(
+              {(allFolders ? allFolders.length > 0 : false) &&
+                sortItems(allFolders, folderSortType).map(
                   (childFolder: any) => (
                     <Folder folder={childFolder} key={childFolder.id} />
                   )
@@ -105,17 +103,20 @@ function Dashboard() {
 
           <section className="section_files">
             <div className="dashboard_container_header">
-              <h2 className="dashboard_header_title">Files</h2>
+              <h2 className="dashboard_header_title">All Files</h2>
               <AddFileButton currentFolder={folder} />
               <SortFilesMenu />
             </div>
             <hr className="dashboard_header_divider"></hr>
-            <div className="files_container">
-              {childFiles.length > 0 &&
-                sortItems(childFiles, fileSortType).map((childFile: any) => (
-                  <File file={childFile} key={childFile.id} />
-                ))}
-            </div>
+
+            {(folder ? folder.name : 'error') === 'Root' &&
+              (allFiles ? allFiles.length > 0 : false) && (
+                <div className="files_container">
+                  {sortItems(allFiles, fileSortType).map((file: any) => (
+                    <File file={file} key={file.id} />
+                  ))}
+                </div>
+              )}
           </section>
         </main>
       </div>
@@ -123,4 +124,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default QuickAccess;
