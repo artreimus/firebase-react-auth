@@ -106,7 +106,7 @@ function Sidebar({ windowWidth }: { windowWidth: number }) {
               <p style={setStylesFont('quick-access')}>Quick Access</p>
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link
               to="/private-files"
               className="sidebar_link  link"
@@ -119,7 +119,7 @@ function Sidebar({ windowWidth }: { windowWidth: number }) {
               </div>
               <p style={setStylesFont('private-files')}>Private Files</p>
             </Link>
-          </li>
+          </li> */}
           <li>
             <Link
               to="/favorites"
