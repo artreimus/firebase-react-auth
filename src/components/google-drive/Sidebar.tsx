@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useProvideContext } from '../../contexts/Context';
+import SidebarAddFileButton from './SidebarAddFileButton';
 
 function Sidebar({ windowWidth }: { windowWidth: number }) {
   const { isSidebarOpen, setIsSidebarOpen, currentPage }: any =
@@ -58,7 +59,7 @@ function Sidebar({ windowWidth }: { windowWidth: number }) {
     console.log(page === currentPage);
     if (page === currentPage) {
       return {
-        color: '#302f2f',
+        color: '#e8e8e8',
       };
     }
     return { color: '#ffffff' };
@@ -74,8 +75,11 @@ function Sidebar({ windowWidth }: { windowWidth: number }) {
         style={stylesDark}
       ></div>
       <div className="sidebar" style={stylesSidebar}>
-        <div className="sidebar_container_btn" style={stylesSidebarChildren}>
-          <button className="sidebar_btn link">Upload File</button>
+        <div
+          className="sidebar_container_btn remove_sm"
+          style={stylesSidebarChildren}
+        >
+          <SidebarAddFileButton />
         </div>
         <ul className="sidebar_list" style={stylesSidebarChildren}>
           <li>
