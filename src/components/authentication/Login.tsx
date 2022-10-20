@@ -29,12 +29,12 @@ function Login(): JSX.Element {
     setIsLoading(false);
   }
 
-  function handleChange(event: any) {
+  function handleChange(event: React.FormEvent<HTMLInputElement>) {
     event.preventDefault();
 
-    const { name, value } = event.target;
+    const { name, value } = event.currentTarget;
 
-    setFormData((prevFormData: any) => ({
+    setFormData((prevFormData: { email: string; password: string }) => ({
       ...prevFormData,
       [name]: value,
     }));

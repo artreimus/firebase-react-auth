@@ -4,7 +4,14 @@ import { database } from '../../firebase';
 import { ROOT_FOLDER, useFolder } from '../../hooks/useFolder';
 import { storage } from '../../firebase';
 
-function DeleteFile({ fileId, fileName, userId, fileFolderId }: any) {
+interface PropType {
+  fileId: string;
+  fileName: string;
+  userId: string;
+  fileFolderId: string;
+}
+
+function DeleteFile({ fileId, fileName, userId, fileFolderId }: PropType) {
   const [open, setOpen] = useState(false);
   const [openError, setOpenError] = useState(false);
 
@@ -18,7 +25,7 @@ function DeleteFile({ fileId, fileName, userId, fileFolderId }: any) {
     setOpen(false);
   }
 
-  function showError(e: any) {
+  function showError() {
     setOpenError(true);
   }
 
@@ -48,9 +55,9 @@ function DeleteFile({ fileId, fileName, userId, fileFolderId }: any) {
           .then(() => {
             console.log('Successfully deleted in database!');
           })
-          .catch(() => showError('Failed to delete from Firebase Database'));
+          .catch(() => showError());
       })
-      .catch(() => showError('Failed to delete from Firebase Storage'));
+      .catch(() => showError());
   }
 
   return (

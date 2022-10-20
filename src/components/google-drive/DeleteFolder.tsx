@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Button, Modal } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import { database } from '../../firebase';
 import { useFolder } from '../../hooks/useFolder';
 
-function DeleteFolder({ folderId }: any) {
+function DeleteFolder({ folderId }: { folderId: string }) {
   const [open, setOpen] = useState(false);
   const [openError, setOpenError] = useState(false);
 

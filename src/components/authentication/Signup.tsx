@@ -35,15 +35,22 @@ function Signup(): JSX.Element {
     setIsLoading(false);
   }
 
-  function handleChange(event: any) {
+  function handleChange(event: React.FormEvent<HTMLInputElement>) {
     event.preventDefault();
 
-    const { name, value } = event.target;
+    const { name, value } = event.currentTarget;
 
-    setFormData((prevFormData: any) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
+    setFormData(
+      (prevFormData: {
+        email: string;
+        name: string;
+        password: string;
+        confirmPassword: string;
+      }) => ({
+        ...prevFormData,
+        [name]: value,
+      })
+    );
   }
 
   return (

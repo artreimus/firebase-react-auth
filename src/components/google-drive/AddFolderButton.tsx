@@ -87,6 +87,7 @@ function AddFolderButton({ currentFolder }: any) {
               Add Folder
             </button>
             <button
+              type="button"
               onClick={closeModal}
               className="modal_button modal_cancel_button"
             >

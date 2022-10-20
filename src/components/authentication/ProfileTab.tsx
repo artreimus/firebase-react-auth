@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Modal } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { useProvideContext } from '../../contexts/Context';
-import CenteredContainer from './CenteredContainer';
 
 function ProfileTab() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

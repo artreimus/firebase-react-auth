@@ -1,27 +1,9 @@
-import { useState } from 'react';
-import { Button, Card, Alert } from 'react-bootstrap';
 import { useProvideContext } from '../../contexts/Context';
-import { Link, useNavigate } from 'react-router-dom';
-import CenteredContainer from './CenteredContainer';
+import { Link } from 'react-router-dom';
 import Navbar from '../google-drive/Navbar';
 
 function Profile() {
-  const [error, setError] = useState<string>('');
-
-  const { currentUser, logout }: any = useProvideContext();
-
-  const navigate = useNavigate();
-
-  async function handleLogout() {
-    setError('');
-
-    try {
-      await logout();
-      navigate('/');
-    } catch {
-      setError('Failed to logout');
-    }
-  }
+  const { currentUser }: any = useProvideContext();
 
   return (
     <>

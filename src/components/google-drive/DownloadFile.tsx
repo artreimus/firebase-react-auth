@@ -1,6 +1,12 @@
 import React from 'react';
 
-function DownloadFile({ fileName, userId, fileUrl }: any) {
+interface PropType {
+  fileName: string;
+  userId: string;
+  fileUrl: string;
+}
+
+function DownloadFile({ fileName, userId, fileUrl }: PropType) {
   return (
     <button className="item_menu_button">
       <a

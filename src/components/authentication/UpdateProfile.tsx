@@ -1,14 +1,8 @@
-import { Button, Card, Form, Alert } from 'react-bootstrap';
-import { SyntheticEvent, useRef, useState } from 'react';
+import { Alert } from 'react-bootstrap';
+import { SyntheticEvent, useState } from 'react';
 import { useProvideContext } from '../../contexts/Context';
-import { Link, useNavigate } from 'react-router-dom';
-import CenteredContainer from './CenteredContainer';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../google-drive/Navbar';
-
-// interface useAuthContext {
-//   currentUser: firebase.User | null;
-//   signup: any;
-// }
 
 function UpdateProfile(): JSX.Element {
   const { currentUser, updateEmail, updatePassword, updateName }: any =
@@ -25,22 +19,23 @@ function UpdateProfile(): JSX.Element {
 
   console.log(formData);
 
-  function handleChange(event: any) {
+  function handleChange(event: React.FormEvent<HTMLInputElement>) {
     event.preventDefault();
 
-    const { name, value } = event.target;
+    const { name, value } = event.currentTarget;
 
-    setFormData((prevFormData: any) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
+    setFormData(
+      (prevFormData: {
+        email: string;
+        name: string;
+        password: string;
+        confirmPassword: string;
+      }) => ({
+        ...prevFormData,
+        [name]: value,
+      })
+    );
   }
-
-  const emailRef = useRef() as React.MutableRefObject<HTMLInputElement>;
-  const passwordRef =
-    useRef() as React.MutableRefObject<HTMLInputElement> as React.MutableRefObject<HTMLInputElement>;
-  const passwordConfirmRef =
-    useRef() as React.MutableRefObject<HTMLInputElement>;
 
   const navigate = useNavigate();
 

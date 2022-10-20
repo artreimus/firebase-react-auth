@@ -13,10 +13,8 @@ function AddFileButton({ currentFolder }: any) {
   const [uploadingFiles, setUploadingFiles] = useState<any>([]);
   const [open, setOpen] = useState(false);
   const [originalFile, setOriginalFile] = useState<File>();
-
   const { folderId } = useParams();
   const { childFiles }: any = useFolder(folderId);
-
   const { currentUser }: any = useProvideContext();
 
   let fileName = '';
