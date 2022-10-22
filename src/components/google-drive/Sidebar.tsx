@@ -26,8 +26,6 @@ function Sidebar({ windowWidth }: { windowWidth: number }) {
     return { innerWidth, innerHeight };
   }
 
-  console.log(windowSize.innerWidth);
-
   const stylesSidebar = {
     minWidth:
       windowSize.innerWidth < 1300
@@ -55,8 +53,6 @@ function Sidebar({ windowWidth }: { windowWidth: number }) {
   };
 
   function setStylesFont(page: string) {
-    console.log(currentPage);
-    console.log(page === currentPage);
     if (page === currentPage) {
       return {
         color: '#e8e8e8',

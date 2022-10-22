@@ -29,7 +29,6 @@ function DeleteFolder({ folderId }: { folderId: string }) {
     closeModal();
 
     if (childFolders.length > 0 || childFiles.length > 0) {
-      console.log('not safe to delete');
       showError();
       return;
     }
@@ -78,7 +77,7 @@ function DeleteFolder({ folderId }: { folderId: string }) {
             >
               <div className="button_container_icon">
                 <img src={require(`../../images/cancel.png`)} alt="File Icon" />
-              </div>{' '}
+              </div>
             </button>
           </div>
         </Modal.Body>

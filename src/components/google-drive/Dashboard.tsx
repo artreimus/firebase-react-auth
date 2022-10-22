@@ -20,7 +20,6 @@ function Dashboard() {
     useProvideContext();
 
   const [windowSize, setWindowSize] = useState(getWindowSize());
-  console.log(folderId);
 
   useEffect(() => {
     if (folderId === undefined) setCurrentPage('dashboard');
@@ -106,7 +105,7 @@ function Dashboard() {
           <section className="section_files">
             <div className="dashboard_container_header">
               <h2 className="dashboard_header_title">Files</h2>
-              <AddFileButton currentFolder={folder} />
+              <AddFileButton />
               <SortFilesMenu />
             </div>
             <hr className="dashboard_header_divider"></hr>

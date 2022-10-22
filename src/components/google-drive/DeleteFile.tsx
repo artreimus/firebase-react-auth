@@ -40,7 +40,6 @@ function DeleteFile({ fileId, fileName, userId, fileFolderId }: PropType) {
       folder === ROOT_FOLDER
         ? `files/${userId}${folder.path.join('/')}/${fileName}`
         : `files/${userId}/${folder.path.join('/')}/${folder.name}/${fileName}`;
-    console.log(filePath);
 
     const storageRef = storage.ref();
     const fileRef = storageRef.child(filePath);
@@ -48,12 +47,11 @@ function DeleteFile({ fileId, fileName, userId, fileFolderId }: PropType) {
     fileRef
       .delete()
       .then(() => {
-        console.log('File deleted successfully in storage');
         database.files
           .doc(fileId)
           .delete()
           .then(() => {
-            console.log('Successfully deleted in database!');
+            console.log('Successfully deleted in database');
           })
           .catch(() => showError());
       })
