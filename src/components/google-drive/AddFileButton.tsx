@@ -9,12 +9,12 @@ import { UUID } from 'uuid-generator-ts';
 import { Modal, ProgressBar, Toast, Button } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 
-function AddFileButton({ currentFolder }: any) {
+function AddFileButton() {
   const [uploadingFiles, setUploadingFiles] = useState<any>([]);
   const [open, setOpen] = useState(false);
   const [originalFile, setOriginalFile] = useState<File>();
   const { folderId } = useParams();
-  const { childFiles }: any = useFolder(folderId);
+  const { childFiles, folder }: any = useFolder(folderId);
   const { currentUser }: any = useProvideContext();
 
   let fileName = '';
@@ -36,7 +36,7 @@ function AddFileButton({ currentFolder }: any) {
 
   function updateFilename(file: any) {
     fileName = file.name;
-    if (currentFolder == null || file == null) return;
+    if (folder == null || file == null) return;
 
     let fileNumber = 1;
 
@@ -58,7 +58,7 @@ function AddFileButton({ currentFolder }: any) {
 
   function checkIfFileExist(e: any) {
     const file: any = e.target.files![0];
-    if (currentFolder == null || file == null) return;
+    if (folder == null || file == null) return;
 
     if (childFiles.length > 0) {
       childFiles.forEach((childFile: any) => {
@@ -73,7 +73,7 @@ function AddFileButton({ currentFolder }: any) {
   }
 
   function handleUpload(file: any) {
-    if (currentFolder == null || file == null) return;
+    if (folder == null || file == null) return;
 
     const id = new UUID();
 
@@ -85,9 +85,9 @@ function AddFileButton({ currentFolder }: any) {
     });
 
     const filePath: string =
-      currentFolder === ROOT_FOLDER
-        ? `${currentFolder.path.join('/')}/${file.name}`
-        : `${currentFolder.path.join('/')}/${currentFolder.name}/${file.name}`;
+      folder === ROOT_FOLDER
+        ? `${folder.path.join('/')}/${file.name}`
+        : `${folder.path.join('/')}/${folder.name}/${file.name}`;
 
     const uploadTask = storage
       .ref(`/files/${currentUser.uid}/${filePath}`) // upload directory
@@ -138,7 +138,7 @@ function AddFileButton({ currentFolder }: any) {
           database.files
             .where('name', '==', file.name)
             .where('userId', '==', currentUser.uid)
-            .where('folderId', '==', currentFolder.id)
+            .where('folderId', '==', folder.id)
             .get()
             .then((existingFiles) => {
               const existingFile = existingFiles.docs[0];
@@ -150,7 +150,7 @@ function AddFileButton({ currentFolder }: any) {
                   name: file.name,
                   size: file.size,
                   createdAt: database.getCurrentTimeStamps(),
-                  folderId: currentFolder.id,
+                  folderId: folder.id,
                   userId: currentUser.uid,
                   isFavorite: false,
                 });
