@@ -27,7 +27,7 @@ function Signup(): JSX.Element {
     try {
       setError('');
       setIsLoading(true);
-      await signup(formData.email, formData.email, formData.name);
+      await signup(formData.email, formData.password, formData.name);
       navigate('/dashboard');
     } catch {
       setError('Failed to create an account');
