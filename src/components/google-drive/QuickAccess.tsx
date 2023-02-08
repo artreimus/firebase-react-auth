@@ -104,7 +104,7 @@ function QuickAccess() {
           <section className="section_files">
             <div className="dashboard_container_header">
               <h2 className="dashboard_header_title">All Files</h2>
-              <AddFileButton currentFolder={folder} />
+              <AddFileButton />
               <SortFilesMenu />
             </div>
             <hr className="dashboard_header_divider"></hr>
