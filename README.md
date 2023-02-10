@@ -4,3 +4,6 @@ This repository contains a beautiful cloud file storage application built using 
 
 ## Live Demo: https://google-drive-clone-artreimus.vercel.app/
 ## Figma Mockup: https://www.figma.com/file/1IrALjsn8SvBzNS4uz16wq/Pandora?node-id=0%3A1
+
+![Project Image](https://github.com/artreimus/google-drive-clone/blob/main/image.jpg?raw=true)
+
