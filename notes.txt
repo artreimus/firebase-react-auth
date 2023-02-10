@@ -1,4 +1,0 @@
-npm i:
-- firebase 
-- bootstrap react-bootstrap
-- react-router dom @types/react-router-dom
