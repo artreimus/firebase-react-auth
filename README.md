@@ -1,4 +1,4 @@
-<h1 align="center">Pandora's Cloud - Google Drive Clone</h1>
+<h1 align="center">Pandora's Cloud - Cloud File Storage </h1>
 
 This repository contains a beautiful cloud file storage application built using TypeScript, React and Firebase. It provides a seamless user experience by allowing users to store their files securely in the cloud. The application is fully responsive, making it both desktop and mobile friendly. The clean and modern design makes it easy to use, while the power of Firebase provides robust and reliable storage capabilities. Whether you need to store important documents, photos, or other types of files, this app has you covered.
 
